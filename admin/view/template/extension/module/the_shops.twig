@@ -1,0 +1,116 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        {% if error_warning %}
+            <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+            </div>
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-title">{{ entry_title }}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="module_the_shops_title" id="input-title" class="form-control" placeholder="{{ entry_title }}" value="{{ module_the_shops_title }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-api">{{ entry_api }}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="module_the_shops_api" id="input-api" class="form-control" placeholder="{{ entry_api }}" value="{{ module_the_shops_api }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+                        <div class="col-sm-10">
+                            <select name="module_the_shops_status" id="input-status" class="form-control">
+                                {% if module_the_shops_status %}
+                                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                                    <option value="0">{{ text_disabled }}</option>
+                                {% else %}
+                                    <option value="1">{{ text_enabled }}</option>
+                                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <table id="shop-list" class="table table-bordered table-responsive">
+                            <thead>
+                            <tr>
+                                <th>{{ city  }}</th>
+                                <th>{{ address }}</th>
+                                <th>{{ longitude }}</th>
+                                <th>{{ latitude }}</th>
+                                <th>{{ schedule }}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            {%  set shop_row = 0  %}
+                            {% if shops %}
+                                {%  for shop in shops %}
+                                    <tbody id="shop-row{{ shop_row }}">
+                                    <tr>
+                                        <td><input type="text" name="shop[{{ shop_row }}][city]"  class="form-control" value="{{ shop['city'] }}" /></td>
+                                        <td><input type="text" name="shop[{{ shop_row }}][address]"  class="form-control" value="{{ shop['address'] }}" /></td>
+                                        <td><input type="text" name="shop[{{ shop_row }}][longitude]"  class="form-control" value="{{ shop['longitude'] }}" /></td>
+                                        <td><input type="text" name="shop[{{ shop_row }}][latitude]"  class="form-control" value="{{ shop['latitude'] }}" /></td>
+                                        <td><input type="text" name="shop[{{ shop_row }}][schedule]"  class="form-control" value="{{ shop['schedule'] }}" /></td>
+                                        <td><a onclick="$('#shop-row{{ shop_row }}').remove();" class="btn btn-danger">Очистить</a></td>
+                                    </tr>
+                                    </tbody>
+                                    {%  set shop_row = shop_row +1  %}
+                                {% endfor %}
+
+                            {% endif %}
+                            <tfoot>
+                            <tr>
+                                <td colspan="5"></td>
+                                <td class="text-right"><a onclick="addOption();" class="btn btn-info">{{ button_add }}</a>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var shop_row = {{ shop_row }};
+
+    function addOption() {
+        html = '<tbody id="shop-row' + shop_row + '">';
+        html +='<tr>';
+        html +=' <td><input type="text" class="form-control" name="shop['+ shop_row + '][city]" value="" /></td>';
+        html +=' <td><input type="text" class="form-control" name="shop['+ shop_row + '][address]" value="" /></td>';
+        html +=' <td><input type="text" class="form-control" name="shop['+ shop_row + '][longitude]" value="" /></td>';
+        html +=' <td><input type="text" class="form-control" name="shop['+ shop_row + '][latitude]" value="" /></td>';
+        html +=' <td><input type="text" class="form-control" name="shop['+ shop_row + '][schedule]" value="" /></td>';
+        html += '<td class="text-left"><a onclick="$(\'#shop-row' + shop_row + '\').remove();" class="btn btn-danger"><i class="fa fa-minus-circle"></i></a></td>';
+        html += '</tr>';
+        html += '</tbody>';
+        $('#shop-list tfoot').before(html);
+        shop_row++;
+    }
+</script>
+{{ footer }}
